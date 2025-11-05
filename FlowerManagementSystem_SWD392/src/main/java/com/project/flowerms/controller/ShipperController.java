@@ -72,14 +72,14 @@ public class ShipperController {
     @PostMapping("/startShipping/{id}")
     public String startShipping(@PathVariable("id") Integer orderId) {
         Orders order = orderService.getOrderById(orderId);
-        if (order != null && "Processing".equalsIgnoreCase(order.getStatus())) {
+        if (order != null && "Processing".equals(order.getStatus())) {
             order.setStatus("Shipping");
             orderService.save(order);
-        } else if (order != null && "Shipping".equalsIgnoreCase(order.getStatus())) {
+        } else if (order != null && "Shipping".equals(order.getStatus())) {
             order.setStatus("Completed");
             orderService.save(order);
         }
-        return "redirect:/shipper/in-progress";
+        return "redirect:/shipper/processing";
     }
 
 
