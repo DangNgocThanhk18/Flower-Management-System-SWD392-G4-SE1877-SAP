@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Processing Orders</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="d-flex">
+<div class="sidebar p-3 bg-dark text-white" style="width:250px;min-height:100vh;">
+  <h4>🚚 Shipper Panel</h4><hr>
+  <a class="d-block text-white mb-2" th:href="@{/shipper/dashboard}">Pending Orders</a>
+  <a class="d-block text-white mb-2" th:href="@{/shipper/processing}">Processing</a>
+  <a class="d-block text-white mb-2" th:href="@{/shipper/completed}">Completed</a>
+  <a class="d-block text-danger" th:href="@{/logout}">Logout</a>
+</div>
+
+<div class="flex-grow-1 p-4">
+  <h3>Orders You Are Processing</h3>
+  <table class="table table-bordered align-middle text-center">
+    <thead class="table-light">
+    <tr>
+      <th>ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="o : ${processingOrders}">
+      <td th:text="${o.orderId}"></td>
+      <td th:text="${o.user.fullname}"></td>
+      <td th:text="${o.total + ' $'}"></td>
+      <td><span class="badge bg-info text-dark" th:text="${o.status}"></span></td>
+      <td>
+        <!-- Nếu đơn hàng đang Processing -->
+        <form th:if="${o.status == 'Processing'}"
+              th:action="@{/shipper/startShipping/{id}(id=${o.orderId})}"
+              method="post" style="display:inline;">
+          <button class="btn btn-primary btn-sm">Start Shipping</button>
+        </form>
+
+        <!-- Nếu đơn hàng đang Shipping -->
+        <form th:if="${o.status == 'Shipping'}"
+              th:action="@{/shipper/startShipping/{id}(id=${o.orderId})}"
+              method="post" style="display:inline;">
+          <button class="btn btn-success btn-sm">Done</button>
+        </form>
+
+        <!-- Nút huỷ và trả đơn -->
+        <form th:action="@{/shipper/cancel/{id}(id=${o.orderId})}"
+              method="post" style="display:inline;">
+          <button class="btn btn-danger btn-sm">Cancel</button>
+        </form>
+        <form th:action="@{/shipper/return/{id}(id=${o.orderId})}"
+              method="post" style="display:inline;">
+          <button class="btn btn-warning btn-sm">Return</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

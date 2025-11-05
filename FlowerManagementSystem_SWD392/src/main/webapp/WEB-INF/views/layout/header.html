@@ -1,0 +1,72 @@
+<header th:fragment="header">
+    <script src="https://kit.fontawesome.com/bf043842f3.js" crossorigin="anonymous"></script>
+    <style>
+        .header {
+            width: 100%;
+            background: #ffffff;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        .logo {
+            font-size: 26px;
+            font-weight: 700;
+            color: #e9837a;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+        }
+        .navbar {
+            display: flex;
+            gap: 25px;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: #222;
+            font-size: 16px;
+            font-weight: 500;
+            position: relative;
+            padding-bottom: 3px;
+        }
+        .navbar a::after {
+            content: "";
+            width: 0;
+            height: 2px;
+            background: #000;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            transition: 0.3s;
+        }
+        .navbar a:hover::after {
+            width: 100%;
+        }
+    </style>
+
+    <div class="header">
+        <a th:href="@{/}" class="logo">🌸 FLOWERSHOP</a>
+
+        <nav class="navbar">
+            <a th:href="@{/home}">Home</a>
+            <a th:href="@{/products}">Products</a>
+            <a th:href="@{/order/view}">Order</a>
+            <a th:href="@{/about}">About</a>
+            <a th:href="@{/contact}">Contact</a>
+            <a th:href="@{/cart/view}"><i class="fa-solid fa-cart-shopping"></i></a>
+
+            <!-- Nếu user đã đăng nhập -->
+            <span th:if="${user != null}" class="ms-3">
+                👤 <b th:text="${user.username}"></b>
+                <a th:href="@{/logout}" class="ms-2 text-danger">(Logout)</a>
+            </span>
+
+            <!-- Nếu chưa đăng nhập -->
+            <a th:if="${user == null}" th:href="@{/login}" class="btn btn-outline-dark ms-2">Login</a>
+        </nav>
+    </div>
+</header>

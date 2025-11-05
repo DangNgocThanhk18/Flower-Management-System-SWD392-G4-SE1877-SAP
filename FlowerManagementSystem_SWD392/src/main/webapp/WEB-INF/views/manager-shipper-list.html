@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Manager Dashboard - Shippers</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f8f9fa;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 230px;
+      height: 100vh;
+      background: #343a40;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding: 25px 0;
+      color: white;
+    }
+
+    .sidebar h4 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #ffc107;
+    }
+
+    .sidebar a {
+      display: block;
+      color: #ddd;
+      padding: 12px 20px;
+      text-decoration: none;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: #495057;
+      color: #fff;
+    }
+
+    /* Content */
+    .main-content {
+      margin-left: 240px;
+      padding: 40px;
+    }
+
+    .table {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    h2 {
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ✅ SIDEBAR -->
+<div class="sidebar">
+  <h4>🌼 Manager Panel</h4>
+  <a th:href="@{/manager/orders}">📦 Orders</a>
+  <a th:href="@{/manager/shipper-list}" class="active">🚚 Shippers</a>
+  <a th:href="@{/manager/reports}">📊 Reports</a>
+  <hr class="text-light mx-3">
+  <a th:href="@{/logout}" class="text-danger">🚪 Logout</a>
+</div>
+
+<!-- ✅ MAIN CONTENT -->
+<div class="main-content">
+  <h2 class="mb-4">🚚 Shippers Management</h2>
+
+  <table class="table table-bordered table-hover align-middle text-center shadow-sm">
+    <thead class="table-dark">
+    <tr>
+      <th>ID</th>
+      <th>Full Name</th>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="shipper : ${shippers}">
+      <td th:text="${shipper.userId}"></td>
+      <td th:text="${shipper.fullname}"></td>
+      <td th:text="${shipper.username}"></td>
+      <td th:text="${shipper.email}"></td>
+      <td th:text="${shipper.phone}"></td>
+      <td>
+                    <span th:classappend="${shipper.isActive == 1} ? 'badge bg-success' : 'badge bg-secondary'"
+                          th:text="${shipper.isActive == 1 ? 'Active' : 'Inactive'}"></span>
+      </td>
+      <td>
+        <form th:action="@{/manager/shipper/toggle/{id}(id=${shipper.userId})}" method="post">
+          <button th:classappend="${shipper.isActive == 1} ? 'btn btn-danger btn-sm' : 'btn btn-success btn-sm'"
+                  th:text="${shipper.isActive == 1 ? 'Deactivate' : 'Activate'}"></button>
+        </form>
+      </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(shippers)}">
+      <td colspan="7" class="text-center text-muted">No shippers found.</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="text-center mt-3">
+    <a th:href="@{/manager/orders}" class="btn btn-secondary">← Back to Orders</a>
+  </div>
+</div>
+
+</body>
+</html>

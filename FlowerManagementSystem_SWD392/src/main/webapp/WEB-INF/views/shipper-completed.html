@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Completed Orders</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="d-flex">
+<div class="sidebar p-3 bg-dark text-white" style="width:250px;min-height:100vh;">
+  <h4>🚚 Shipper Panel</h4><hr>
+  <a class="d-block text-white mb-2" th:href="@{/shipper/dashboard}">Pending Orders</a>
+  <a class="d-block text-white mb-2" th:href="@{/shipper/processing}">Processing</a>
+  <a class="d-block text-white mb-2" th:href="@{/shipper/completed}">Completed</a>
+  <a class="d-block text-danger" th:href="@{/logout}">Logout</a>
+</div>
+
+<div class="flex-grow-1 p-4">
+  <h3>Completed or Canceled Orders</h3>
+  <table class="table table-bordered align-middle text-center">
+    <thead class="table-light">
+    <tr>
+      <th>ID</th><th>Customer</th><th>Total</th><th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="o : ${completedOrders}">
+      <td th:text="${o.orderId}"></td>
+      <td th:text="${o.user.fullname}"></td>
+      <td th:text="${o.total + ' $'}"></td>
+      <td>
+        <span th:if="${o.status == 'Completed'}" class="badge bg-success">Delivered</span>
+        <span th:if="${o.status == 'Cancelled'}" class="badge bg-danger">Canceled</span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

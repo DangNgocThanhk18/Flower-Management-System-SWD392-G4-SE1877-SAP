@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manager Dashboard - Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 230px;
+            height: 100vh;
+            background: #343a40;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 25px 0;
+            color: white;
+        }
+
+        .sidebar h4 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ffc107;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #ddd;
+            padding: 12px 20px;
+            text-decoration: none;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #495057;
+            color: #fff;
+        }
+
+        /* Content */
+        .main-content {
+            margin-left: 240px;
+            padding: 40px;
+        }
+
+        .table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .filter-form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ✅ SIDEBAR -->
+<div class="sidebar">
+    <h4>🌼 Manager Panel</h4>
+    <a th:href="@{/manager/orders}" class="active">📦 Orders</a>
+    <a th:href="@{/manager/shipper-list}">🚚 Shippers</a>
+    <a th:href="@{/manager/reports}">📊 Reports</a>
+    <hr class="text-light mx-3">
+    <a th:href="@{/logout}" class="text-danger">🚪 Logout</a>
+</div>
+
+<!-- ✅ MAIN CONTENT -->
+<div class="main-content">
+    <h2 class="mb-4">📊 Orders Management</h2>
+
+    <!-- Search & Filter -->
+    <form th:action="@{/manager/orders}" method="get" class="row g-3 align-items-center filter-form">
+        <div class="col-md-4">
+            <input type="text" name="keyword" class="form-control"
+                   placeholder="🔍 Search by ID, Shipper, or Date..."
+                   th:value="${keyword}">
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-select">
+                <option value="">All Status</option>
+                <option value="Pending" th:selected="${status == 'Pending'}">Pending</option>
+                <option value="Processing" th:selected="${status == 'Processing'}">Processing</option>
+                <option value="Shipping" th:selected="${status == 'Shipping'}">Shipping</option>
+                <option value="Completed" th:selected="${status == 'Completed'}">Completed</option>
+                <option value="Cancelled" th:selected="${status == 'Cancelled'}">Cancelled</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-success w-100">Filter</button>
+        </div>
+        <div class="col-md-2">
+            <a th:href="@{/manager/orders}" class="btn btn-outline-secondary w-100">Reset</a>
+        </div>
+    </form>
+
+    <!-- Orders Table -->
+    <table class="table table-bordered text-center align-middle shadow-sm">
+        <thead class="table-primary">
+        <tr>
+            <th>#</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th>Shipper</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.orderId}"></td>
+            <td th:text="${order.orderDate}"></td>
+            <td>
+        <span th:class="${order.status == 'Completed' ? 'badge bg-success' :
+                       (order.status == 'Shipping' ? 'badge bg-info text-dark' :
+                       (order.status == 'Pending' ? 'badge bg-warning text-dark' :
+                       (order.status == 'Cancelled' ? 'badge bg-danger' : 'badge bg-secondary')))}"
+              th:text="${order.status}">
+        </span>
+            </td>
+            <td th:text="${#numbers.formatDecimal(order.total, 1, 2)} + ' $'"></td>
+            <td th:text="${order.shipper != null ? order.shipper.fullname : '—'}"></td>
+            <td>
+                <div class="d-flex justify-content-center gap-2">
+                    <form th:action="@{/manager/order/cancel/{id}(id=${order.orderId})}" method="post">
+                        <button class="btn btn-danger btn-sm"
+                                th:disabled="${order.status == 'Cancelled' || order.status == 'Completed'}">
+                            Cancel
+                        </button>
+                    </form>
+                    <form th:action="@{/manager/order/return/{id}(id=${order.orderId})}" method="post">
+                        <button class="btn btn-warning btn-sm"
+                                th:disabled="${order.status == 'Pending'}">
+                            Return
+                        </button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(orders)}">
+            <td colspan="6" class="text-center text-muted">No orders found.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
